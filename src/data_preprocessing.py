@@ -155,6 +155,34 @@ def load_and_preprocess_data(filepath):
 
     return df
 
+def load_and_augment_data_for_visualization(filepath):
+    """Loads dataset, handles augmentation for class balancing, and sends the augmented dataset for visualization."""
+    df = pd.read_csv(filepath)
+
+    df = df.drop_duplicates(subset=["description"])
+
+    # Augment data to balance classes
+    class_counts = df["type"].value_counts()
+    max_count = class_counts.max()
+    augmented_rows = []
+
+    for label, count in class_counts.items():
+        subset = df[df["type"] == label]
+        needed = max_count - count
+        if needed > 0:
+            for _ in range(needed):
+                row = subset.sample(1).iloc[0]
+                new_desc = augment_text(row["description"])
+                augmented_rows.append({
+                    "description": new_desc,
+                    "type": label,
+                })
+
+    if augmented_rows:
+        aug_df = pd.DataFrame(augmented_rows)
+        df = pd.concat([df, aug_df], ignore_index=True)
+
+    return df
 
 def sentence_embed(text_list, model):
     """Generates embeddings using SentenceTransformer."""

@@ -6,6 +6,7 @@ from sklearn.preprocessing import LabelEncoder
 from tensorflow.keras.utils import to_categorical
 from sentence_transformers import SentenceTransformer
 
+import visualizations
 from data_preprocessing import load_and_preprocess_data, sentence_embed
 from model_training import (
     build_distributed_model, train_distributed_model,
@@ -25,7 +26,12 @@ def main():
     print("Loading and preprocessing data...")
     df = load_and_preprocess_data(DATASET_PATH)
 
+    # --- Execute Visualizations ---
+    print("Creating Data Visualizations...")
+    visualizations.main(df, VIS_DIR)
+
     # Encode labels
+    print("Encoding labels...")
     le_dist = LabelEncoder()
     y_dist = le_dist.fit_transform(df['type'])
 
@@ -70,7 +76,7 @@ def main():
     plot_training_history(hist_gen, 'Generalized Types Model', os.path.join(VIS_DIR, 'history_gen.png'))
     evaluate_model(model_gen, X_test_g, y_test_g, le_gen, 'Generalized Types', os.path.join(VIS_DIR, 'cm_gen.png'))
 
-    print("Pipeline complete.")
+    print("Pipeline complete. Models and visualizations saved.")
 
 
 if __name__ == "__main__":
