@@ -10,12 +10,13 @@ from sumy.summarizers.lsa import LsaSummarizer
 import nltk
 from src.data_preprocessing import preprocess_text
 import keras
+import gc
 
 nltk.download('punkt', quiet=True)
 
 @st.cache_resource
 def load_resources():
-    whisper_model = whisper.load_model("medium")
+    whisper_model = whisper.load_model("base")
     embed_model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
     model_dist = keras.models.load_model('Models/distributed_types_20classes.keras')
     model_gen = keras.models.load_model('Models/generalized_types_6classes.keras')
@@ -72,6 +73,7 @@ if audio_file is not None:
 
         # --- Step 2 & 3: Classify and Summarize (Only if Step 1 succeeded) ---
         if raw_text:
+            del whisper_model
             with st.spinner("Classifying..."):
                 processed_text = preprocess_text(raw_text)
                 embedding = np.array(embed_model.encode([processed_text]))
