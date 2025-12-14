@@ -12,7 +12,11 @@ from src.data_preprocessing import preprocess_text
 import keras
 import gc
 
+nltk.download('punkt_tab', quiet=True)
 nltk.download('punkt', quiet=True)
+nltk.download('stopwords', quiet=True)
+nltk.download('wordnet', quiet=True)
+nltk.download('omw-1.4', quiet=True)
 
 @st.cache_resource
 def load_resources():
@@ -74,6 +78,7 @@ if audio_file is not None:
         # --- Step 2 & 3: Classify and Summarize (Only if Step 1 succeeded) ---
         if raw_text:
             del whisper_model
+            gc.collect()
             with st.spinner("Classifying..."):
                 processed_text = preprocess_text(raw_text)
                 embedding = np.array(embed_model.encode([processed_text]))

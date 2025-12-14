@@ -13,3 +13,4 @@ openai-whisper==20240930
 keras~=3.7.0
 transformers~=4.51.3
 sumy~=0.11.0
+tf-keras==2.19.0
